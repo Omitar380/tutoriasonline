@@ -1,6 +1,8 @@
-## Base de datos
+## Base de datos de XAMPP y localHost
 
 El proyecto utiliza MySQL para gestionar la información de TutoresOnLine.
+
+
 -- 1. Tabla de Usuarios (Estudiantes y Tutores)
 CREATE TABLE Usuarios(
     id_usuario INT AUTO_INCREMENT PRIMARY KEY,
