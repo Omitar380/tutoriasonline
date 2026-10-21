@@ -1,88 +1,49 @@
-## Base de datos de XAMPP y localHost
+# 📚 TutoresOnLine
 
-El proyecto utiliza MySQL para gestionar la información de TutoresOnLine.
+## 🚀 Historia y Proceso de Desarrollo
 
+El proyecto **TutoresOnLine** nació como una solución integral para optimizar la conexión entre estudiantes que requieren refuerzo académico y tutores especializados. A continuación, se detalla la evolución de su creación:
 
--- 1. Tabla de Usuarios (Estudiantes y Tutores)
-CREATE TABLE Usuarios(
-    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    apellido VARCHAR(100) NOT NULL,
-    email VARCHAR(150) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    rol ENUM('Estudiante', 'Tutor') NOT NULL,
-    ciudad VARCHAR(100),
-    fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP
-);
--- 2. Tabla de Perfiles de Tutores
-CREATE TABLE Perfiles_Tutores(
-    id_tutor INT PRIMARY KEY,
-    biografia TEXT,
-    tarifa_por_hora DECIMAL(10, 2) NOT NULL,
-    calificacion_promedio DECIMAL(3, 2) DEFAULT 0.00,
-    modalidad_preferida ENUM('Virtual', 'Presencial', 'Ambas') DEFAULT 'Ambas',
-    FOREIGN KEY(id_tutor) REFERENCES Usuarios(id_usuario) ON DELETE CASCADE
-);
--- 3. Tabla de Materias
-CREATE TABLE Materias(
-    id_materia INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_materia VARCHAR(100) UNIQUE NOT NULL,
-    categoria VARCHAR(100)
-);
--- 4. Tabla Intermedia: Tutores y Materias (Relación Muchos a Muchos)
-CREATE TABLE Tutores_Materias(
-    id_tutor INT,
-    id_materia INT,
-    PRIMARY KEY(id_tutor, id_materia),
-    FOREIGN KEY(id_tutor) REFERENCES Perfiles_Tutores(id_tutor) ON DELETE CASCADE,
-    FOREIGN KEY(id_materia) REFERENCES Materias(id_materia) ON DELETE CASCADE
-);
--- 5. Tabla de Horarios Disponibles del Tutor
-CREATE TABLE Horarios_Disponibles(
-    id_horario INT AUTO_INCREMENT PRIMARY KEY,
-    id_tutor INT NOT NULL,
-    dia_semana ENUM(
-        'Lunes',
-        'Martes',
-        'Miércoles',
-        'Jueves',
-        'Viernes',
-        'Sábado',
-        'Domingo'
-    ) NOT NULL,
-    hora_inicio TIME NOT NULL,
-    hora_fin TIME NOT NULL,
-    FOREIGN KEY(id_tutor) REFERENCES Perfiles_Tutores(id_tutor) ON DELETE CASCADE
-);
--- 6. Tabla de Reservas de Sesiones
-CREATE TABLE Reservas_Sesiones(
-    id_reserva INT AUTO_INCREMENT PRIMARY KEY,
-    id_estudiante INT NOT NULL,
-    id_tutor INT NOT NULL,
-    id_materia INT NOT NULL,
-    fecha_sesion DATE NOT NULL,
-    hora_inicio TIME NOT NULL,
-    hora_fin TIME NOT NULL,
-    modalidad ENUM('Virtual', 'Presencial') NOT NULL,
-    enlace_videoconferencia VARCHAR(255),
-    estado ENUM(
-        'Pendiente',
-        'Aceptada',
-        'Rechazada',
-        'Completada',
-        'Cancelada'
-    ) DEFAULT 'Pendiente',
-    FOREIGN KEY(id_estudiante) REFERENCES Usuarios(id_usuario),
-    FOREIGN KEY(id_tutor) REFERENCES Perfiles_Tutores(id_tutor),
-    FOREIGN KEY(id_materia) REFERENCES Materias(id_materia)
-);
--- 7. Tabla de Reseñas y Calificaciones
-CREATE TABLE Resenas_Calificaciones(
-    id_resena INT AUTO_INCREMENT PRIMARY KEY,
-    id_reserva INT UNIQUE NOT NULL,
-    puntuacion INT CHECK
-        (puntuacion BETWEEN 1 AND 5),
-        comentario TEXT,
-        fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY(id_reserva) REFERENCES Reservas_Sesiones(id_reserva)
-);
+### 1. Fase de Concepción y Diseño (Arquitectura y Base de Datos)
+El desarrollo comenzó con la definición de los requerimientos funcionales y el diseño de la arquitectura relacional. Se estructuró un modelo de base de datos robusto compuesto por 7 tablas principales para garantizar la integridad referencial y la separación de roles:
+- **`usuarios`**: Gestión centralizada de credenciales, roles diferenciados ("Estudiante" y "Tutor") y metadatos de registro.
+- **`perfiles_tutores`**: Almacenamiento de biografía, tarifas por hora, calificaciones promedio y modalidades preferidas.
+- **`materias`** y **`tutores_materias`**: Relación de asignaturas disponibles y su asignación directa a cada profesional.
+- **`horarios_disponibles`**: Gestión de disponibilidad horaria para agendamiento.
+- **`reservas_sesiones`**: Control de citas solicitadas, aceptadas o canceladas.
+- **`resenas_calificaciones`**: Sistema de retroalimentación posterior a cada tutoría.
+
+### 2. Implementación del Stack Tecnológico
+Para el desarrollo se seleccionaron tecnologías estándar de la industria orientadas a entornos web dinámicos:
+- **Backend y Conexión:** PHP con consultas seguras mediante PDO (PHP Data Objects) para prevenir inyecciones SQL y asegurar sesiones robustas.
+- **Frontend y Estilos:** HTML5, JavaScript y hojas de estilo centralizadas (`CSS/estilos.css`) enfocadas en un diseño limpio y responsivo.
+- **Entorno de Servidor:** XAMPP (Apache y MySQL) para el despliegue local.
+
+### 3. Construcción de Módulos Funcionales
+Se implementaron 8 módulos principales que cubren el ciclo de vida completo de la plataforma:
+1. Autenticación y control de sesiones seguras por roles.
+2. Panel de control personalizado para estudiantes (**Dashboard Estudiante**).
+3. Panel de control e indicadores de solicitudes para tutores (**Dashboard Tutor**).
+4. Módulo de configuración y actualización de perfiles profesionales.
+5. Explorador y catálogo de materias y categorías.
+6. Sistema de agendamiento de horarios y reservas de sesiones.
+7. Módulo de gestión y visualización de archivos compartidos.
+8. Sistema de calificaciones y reseñas.
+
+### 4. Control de Versiones y Despliegue en Entornos Académicos
+El código fuente fue centralizado y versionado mediante Git, configurando un repositorio público en GitHub (`https://github.com/Omitar380/tutoriasonline.git`). Posteriormente, se realizaron pruebas de integración e importación de la base de datos en los equipos de cómputo del aula universitaria, resolviendo incidencias de mapeo de llaves foráneas (`id_tutor`), configuración de esquemas relacionales y dependencias de ejecución en Apache/MySQL.
+
+---
+
+## 🛠️ Tecnologías Utilizadas
+- **PHP** (con PDO)
+- **MySQL / phpMyAdmin**
+- **HTML5 / CSS3 / JavaScript**
+- **XAMPP Server**
+- **Git y GitHub**
+
+## 👥 Autores y Colaboradores
+Proyecto desarrollado para la entrega del segundo parcial de ingeniería de sistemas por:
+- Omar Navarro
+- Dilan Zapata
+- Handt Torres
